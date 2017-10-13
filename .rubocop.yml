@@ -52,6 +52,7 @@ Metrics/AbcSize:
   Exclude:
     - 'test/**/*.rb'
     - 'lib/sdp/importers/spreadsheet.rb'
+    - 'app/controllers/api/phinvads/*.rb'
 Metrics/ModuleLength:
   Exclude:
 # Avoid complex methods.

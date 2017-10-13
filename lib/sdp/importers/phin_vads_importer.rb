@@ -6,7 +6,7 @@ module SDP
       DEFAULTS = { vads_uri: 'https://phinvads.cdc.gov/vocabService/v2',
                    limit: 1000,
                    max_vs_length: 100,
-                   user_latest: true ,
+                   use_latest: true ,
                    proxy: {}}.freeze
       RS_STATUS_MAPPING = { 'Un-Published' => 'draft', 'Published' => 'published', 'Retired' => 'deprecated' }.freeze
       def initialize(args = {})

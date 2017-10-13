@@ -5,7 +5,6 @@ module Hessian
   class HessianProxy
 
     def initialize(url, proxy={})
-      puts "called"
       parseUrl(url)
       @proxy = proxy
 

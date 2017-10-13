@@ -30,3 +30,4 @@ disable_user_registration: false
 # alias in your local systems /etc/hosts (or equivalent) file to map this hostname
 # to the proper IP address in your environment.
 concept_service_url: 'http://concept-manager.sdp.svc:8080'
+vads_uri: https://phinvads.cdc.gov/vocabService/v2

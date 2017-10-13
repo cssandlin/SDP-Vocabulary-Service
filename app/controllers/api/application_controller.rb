@@ -10,7 +10,8 @@ module Api
     def error(e)
       error_info = {
         message: 'internal-server-error',
-        exception: "#{e.class.name} : #{e.message}"
+        exception: "#{e.class.name} : #{e.message}",
+        backtrace: e.backtrace.to_s
       }
       render json: error_info.to_json, status: 500
     end
