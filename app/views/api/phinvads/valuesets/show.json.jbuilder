@@ -25,18 +25,18 @@
 #     end
 #   end
 # end
-json.resourceType:"ValueSet"
+json.resourceType:ValueSet
 json.id @valueset.id
 json.url	json.url api_phinvads_valueset_url(@valueset.oid.strip)
 json.identifier	do
-  json.system "urn:ietf:rfc:3986"
+  json.system 'urn:ietf:rfc:3986'
   json.value 'urn:oid:' + @valueset.oid
 end
 json.version	@version.versionNumber
 json.name	force_json_encoding(@valueset.name)
 json.status	@valueset.status
 json.date	@valueset.valueSetLastRevisionDate
-json.publisher "PHIN VADS"
+json.publisher 'PHIN VADS'
 json.description	force_json_encoding(@valueset.definitionText)
 json.expansion do
   json.identifier nil
