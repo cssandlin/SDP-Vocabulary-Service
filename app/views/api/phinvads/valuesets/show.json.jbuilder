@@ -25,19 +25,19 @@
 #     end
 #   end
 # end
-json.resourceType:ValueSet
+json.resourceType:"ValueSet"
 json.id @valueset.id
 json.url	json.url api_phinvads_valueset_url(@valueset.oid.strip)
 json.identifier	do
-  json.system 'urn:ietf:rfc:3986'
-  json.value 'urn:oid:' + @valueset.oid.force_encoding('ISO-8859-1').encode('UTF-8')
+  json.system "urn:ietf:rfc:3986"
+  json.value 'urn:oid:' + @valueset.oid
 end
 json.version	@version.versionNumber
-json.name	@valueset.name.force_encoding('ISO-8859-1').encode('UTF-8')
-json.status	@valueset.status.force_encoding('ISO-8859-1').encode('UTF-8')
+json.name	force_json_encoding(@valueset.name)
+json.status	@valueset.status
 json.date	@valueset.valueSetLastRevisionDate
-json.publisher 'PHIN VADS'
-json.description	@valueset.definitionText.force_encoding('ISO-8859-1').encode('UTF-8')
+json.publisher "PHIN VADS"
+json.description	force_json_encoding(@valueset.definitionText)
 json.expansion do
   json.identifier nil
   json.timestamp  nil
@@ -45,9 +45,9 @@ json.expansion do
   json.offset @concepts[:offset]
   json.contains do
     json.array! @concepts[:concepts] do |code|
-      json.system code.codeSystemOid.force_encoding('ISO-8859-1').encode('UTF-8')
-      json.code code.conceptCode.force_encoding('ISO-8859-1').encode('UTF-8')
-      json.display code.codeSystemConceptName.force_encoding('ISO-8859-1').encode('UTF-8')
+      json.system force_json_encoding(code.codeSystemOid)
+      json.code force_json_encoding(code.conceptCode)
+      json.display force_json_encoding(code.codeSystemConceptName)
     end
   end
 end

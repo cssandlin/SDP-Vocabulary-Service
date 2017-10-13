@@ -112,8 +112,7 @@ Rails.application.routes.draw do
     namespace :phinvads do
       get 'valuesets', to: 'valuesets#index', as: :valuesets
       get 'valuesets/:id', to: 'valuesets#show', constraints: { id: /[[0-9]+\\.]*/ }, as: :valueset
-      get 'valuesets/:id/versions', to: 'valuesets#versions', constraints: { id: /.*/ }, as: :valueset_versions
-      get 'valuesets/:id/:version', to: 'valuesets#show', constraints: { id: /.*/ }, as: :valueset_version
+      get 'valuesets/:id/_history/:version', to: 'valuesets#show', constraints: { id: /[[0-9]+\\.]*/ }, as: :valueset_version
     end
   end
 
