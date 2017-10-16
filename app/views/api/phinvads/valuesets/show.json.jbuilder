@@ -25,11 +25,11 @@
 #     end
 #   end
 # end
-json.resourceType:ValueSet
+json.resourceType  'ValueSet'
 json.id @valueset.id
 json.url	json.url api_phinvads_valueset_url(@valueset.oid.strip)
 json.identifier	do
-  json.system 'urn:ietf:rfc:3986'
+  json.system "urn:ietf:rfc:3986"
   json.value 'urn:oid:' + @valueset.oid
 end
 json.version	@version.versionNumber
