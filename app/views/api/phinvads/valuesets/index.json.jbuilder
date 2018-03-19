@@ -1,8 +1,8 @@
-json.resourceType:Bundle
+json.resourceType :Bundle
 json.type 'searchset'
 json.entry do
   json.array! @valuesets do |vs|
-    json.resourceType:ValueSet
+    json.resourceType :ValueSet
     json.id vs[:valueset].id
     json.url	json.url api_phinvads_valueset_url(vs[:valueset].oid.strip)
     json.identifier	do
