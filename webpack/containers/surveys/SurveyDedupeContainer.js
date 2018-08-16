@@ -4,11 +4,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { setSteps } from '../../actions/tutorial_actions';
-import { fetchSurvey, fetchDuplicates } from '../../actions/survey_actions';
+import { resetSurveyRequest, fetchSurvey, fetchDuplicates } from '../../actions/survey_actions';
 import { markAsDuplicate } from '../../actions/questions_actions';
 import { surveyProps } from '../../prop-types/survey_props';
 import SurveyDedupe from '../../components/surveys/SurveyDedupe';
 import currentUserProps from "../../prop-types/current_user_props";
+import LoadingSpinner from '../../components/LoadingSpinner';
+import BasicAlert from '../../components/BasicAlert';
 
 class SurveyDedupeContainer extends Component {
   constructor(props) {
@@ -68,7 +70,7 @@ class SurveyDedupeContainer extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({setSteps, fetchSurvey, fetchDuplicates, markAsDuplicate}, dispatch);
+  return bindActionCreators({setSteps, resetSurveyRequest, fetchSurvey, fetchDuplicates, markAsDuplicate}, dispatch);
 }
 
 function mapStateToProps(state, ownProps) {
@@ -77,6 +79,10 @@ function mapStateToProps(state, ownProps) {
     survey: survey,
     potentialDupes: state.potentialDupes,
     currentUser: state.currentUser,
+    isLoading : state.surveys.isLoading,
+    loadStatus : state.surveys.loadStatus,
+    loadStatusText : state.surveys.loadStatusText
+
   };
 }
 
@@ -88,6 +94,9 @@ SurveyDedupeContainer.propTypes = {
   fetchSurvey: PropTypes.func,
   fetchDuplicates: PropTypes.func,
   markAsDuplicate: PropTypes.func,
+  isLoading: PropTypes.bool,
+  loadStatus : PropTypes.string,
+  loadStatusText : PropTypes.string,
   currentUser: currentUserProps,
 };
 
