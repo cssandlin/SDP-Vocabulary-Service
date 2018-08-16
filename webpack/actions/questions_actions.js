@@ -51,6 +51,43 @@ export function markAsDuplicate(id, replacement, survey, type) {
   };
 }
 
+export function linkToDuplicate(id, replacement, survey, type) {
+  const authenticityToken = getCSRFToken();
+  let route = '';
+  if (type === 'question'){
+    route = routes.link_to_duplicate_question_path(id);
+  } else {
+    route = routes.link_to_duplicate_response_set_path(id);
+  }
+  const putPromise = axios.put(route,
+                      {replacement, survey, authenticityToken},
+                      {headers: {'X-Key-Inflection': 'camel', 'Accept': 'application/json'}});
+  return {
+    type: LINK_TO_DUPLICATE,
+    payload: putPromise
+  };
+}
+
+export function fetchQuestion(id) {
+  store.dispatch({type:FETCH_QUESTION_PENDING});
+  return {
+    type: ADD_ENTITIES,
+    payload: axios.get(routes.questionPath(id), {
+      headers: {'Accept': 'application/json', 'X-Key-Inflection': 'camel'},
+      timeout:AJAX_TIMEOUT
+    }).then((response) => {
+      const normalizedData = normalize(response.data, questionSchema);
+      store.dispatch(fetchQuestionSuccess(response.data));
+      return normalizedData.entities;
+    })
+    .catch( (error) => {
+      store.dispatch(fetchQuestionFailure(error));
+      throw(new Error(error));
+    })
+  };
+}
+
+
 export function fetchQuestionUsage(id) {
   return {
     type: FETCH_QUESTION_USAGE,
@@ -160,25 +197,6 @@ export function removeQuestionFromGroup(id, group) {
     type: REMOVE_QUESTION_FROM_GROUP,
     payload: axios.put(routes.removeFromGroupQuestionPath(id),
      {authenticityToken, group}, {headers: {'X-Key-Inflection': 'camel', 'Accept': 'application/json'}})
-  };
-}
-
-export function fetchQuestion(id) {
-  store.dispatch({type:FETCH_QUESTION_PENDING});
-  return {
-    type: ADD_ENTITIES,
-    payload: axios.get(routes.questionPath(id), {
-      headers: {'Accept': 'application/json', 'X-Key-Inflection': 'camel'},
-      timeout:AJAX_TIMEOUT
-    }).then((response) => {
-      const normalizedData = normalize(response.data, questionSchema);
-      store.dispatch(fetchQuestionSuccess(response.data));
-      return normalizedData.entities;
-    })
-    .catch( (error) => {
-      store.dispatch(fetchQuestionFailure(error));
-      throw(new Error(error));
-    })
   };
 }
 

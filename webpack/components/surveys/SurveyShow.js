@@ -187,8 +187,8 @@ class SurveyShow extends Component {
           {isExtendable(this.props.survey, this.props.currentUser) &&
             <Link className="btn btn-default" to={`/surveys/${this.props.survey.id}/extend`}>Extend</Link>
           }
-          {isEditable(this.props.survey, this.props.currentUser) && this.props.survey.dupeCount > 0 &&
-              <Link className="btn btn-default" to={`surveys/${this.props.survey.id}/dedupe`}>Curate ({this.props.survey.dupeCount})</Link>
+          {isEditable(this.props.survey, this.props.currentUser) && this.props.dupeCount > 0 &&
+              <Link className="btn btn-default" to={`surveys/${this.props.survey.id}/dedupe`}>Curate ({this.props.dupeCount})</Link>
           }
         </div>
         <div className="maincontent-details">
@@ -370,6 +370,7 @@ SurveyShow.propTypes = {
   updateStageSurvey: PropTypes.func,
   setBreadcrumbPath: PropTypes.func,
   fetchSurvey: PropTypes.func,
+  dupeCount: PropTypes.number,
   setStats: PropTypes.func,
   addSurveyToGroup: PropTypes.func,
   removeSurveyFromGroup: PropTypes.func,

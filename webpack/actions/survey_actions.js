@@ -24,7 +24,8 @@ import {
   FETCH_DUPLICATES,
   FETCH_SURVEY_PENDING,
   FETCH_SURVEY_SUCCESS,
-  FETCH_SURVEY_FAILURE
+  FETCH_SURVEY_FAILURE,
+  FETCH_DUPLICATE_COUNT
 } from './types';
 
 const AJAX_TIMEOUT = 1000 * 60 * 5;  // 5 minutes
@@ -91,6 +92,18 @@ export function fetchDuplicates(id) {
   return {
     type: FETCH_DUPLICATES,
     payload: axios.get(routes.duplicatesSurveyPath(id), {
+      headers: {
+        'X-Key-Inflection': 'camel',
+        'Accept': 'application/json'
+      }
+    })
+  };
+}
+
+export function fetchDuplicateCount(id) {
+  return {
+    type: FETCH_DUPLICATE_COUNT,
+    payload: axios.get(routes.duplicateCountSurveyPath(id), {
       headers: {
         'X-Key-Inflection': 'camel',
         'Accept': 'application/json'
