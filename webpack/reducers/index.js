@@ -41,6 +41,7 @@ import groups from './groups_reducer';
 import displayStyle from './display_style_reducer';
 import potentialDupes from './potential_dupes_reducer';
 import breadcrumbPath from './breadcrumb_reducer';
+import ajaxStatus from './ajax_status_reducer';
 
 const categories = byIdWithIndividualReducer(FETCH_CATEGORIES_FULFILLED,
   FETCH_CATEGORY_FULFILLED, 'categories');
@@ -54,7 +55,7 @@ const admins = byIdReducer(FETCH_ADMINS_FULFILLED, GRANT_ADMIN_FULFILLED, REVOKE
 const rootReducer = combineReducers({
   questions, comments, stats, currentUser, responseSets, sections, categories, admins, potentialDupes,
   responseTypes, notifications, searchResults, concepts, conceptSystems, lastSearch, suggestions,
-  surveillancePrograms, surveillanceSystems, surveys, publishers, tutorialSteps, tags, groups, displayStyle, breadcrumbPath
+  surveillancePrograms, surveillanceSystems, surveys, publishers, tutorialSteps, tags, groups, displayStyle, breadcrumbPath, ajaxStatus
 });
 
 export default rootReducer;
