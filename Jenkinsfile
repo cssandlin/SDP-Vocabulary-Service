@@ -7,6 +7,18 @@ pipeline {
   }
 
   stages {
+    stage('Get a ZAP Pod') {
+      node('owasp-zap-openshift') {
+        stage('Scan Web Application') {
+            dir('/zap') {
+                def retVal = sh returnStatus: true, script: 'echo -n "test-${BUILD_NUMBER}-${BRANCH_NAME}" | tr "_A-Z" "-a-z" | cut -c1-24 | sed -e "s/-$//" | /zap/zap-baseline.py -r baseline.html -t -'
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
+                echo "Return value is: ${retVal}"
+            }
+          }
+      }
+    }
+
     stage('Run Tests') {
       agent { label 'vocab-ruby' }
 
