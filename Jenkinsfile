@@ -7,19 +7,6 @@ pipeline {
   }
 
   stages {
-    stage('Get a ZAP Pod') {
-      agent { label 'owasp-zap-jenkins-slave' }
-      
-      steps {
-        script {
-          env.vocabsvcname = sh returnStdout: true, script: 'echo -n "test-${BUILD_NUMBER}-${BRANCH_NAME}" | tr "_A-Z" "-a-z" | cut -c1-24 | sed -e "s/-$//"'
-          def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://${vocabsvcname}'
-          publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
-          echo "Return value is: ${retVal}"
-        }
-      }
-    }
-
     stage('Run Tests') {
       agent { label 'vocab-ruby' }
 
@@ -97,6 +84,20 @@ pipeline {
           sh 'bundle exec rake admin:create_user[test@sdpv.local,testtest,false]'
           sh 'bundle exec rake data:load_test[test@sdpv.local]'
           sh 'bundle exec rake es:test[test@sdpv.local]'
+        }
+
+        stage('Get a ZAP Pod') {
+          agent { label 'owasp-zap-jenkins-slave' }
+      
+          steps {
+            script {
+              env.vocabsvc = sh returnStdout: true, script: 'echo -n "test-${BUILD_NUMBER}-${BRANCH_NAME}" | tr "_A-Z" "-a-z" | cut -c1-24 | sed -e "s/-$//"'
+              env.vocabhost = sh returnStdout: true, script: 'oc get service -l name=${vocabsvc} -o jsonpath="{.items[*].spec.clusterIP}"'
+              def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://${vocabhost}:8080'
+              publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
+              echo "Return value is: ${retVal}"
+            }
+          }
         }
       }
 
