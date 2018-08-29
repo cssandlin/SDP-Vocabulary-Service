@@ -12,7 +12,8 @@ pipeline {
       
       steps {
         script {
-          def retVal = sh returnStatus: true, script: 'echo -n "test-${BUILD_NUMBER}-${BRANCH_NAME}" | tr "_A-Z" "-a-z" | cut -c1-24 | sed -e "s/-$//" | /zap/zap-baseline.py -r baseline.html -t -'
+          env.vocabsvcname = sh returnStdout: true, script: 'echo -n "test-${BUILD_NUMBER}-${BRANCH_NAME}" | tr "_A-Z" "-a-z" | cut -c1-24 | sed -e "s/-$//"'
+          def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://${vocabsvcname}'
           publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
           echo "Return value is: ${retVal}"
         }
