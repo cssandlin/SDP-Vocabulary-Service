@@ -85,33 +85,8 @@ pipeline {
           sh 'bundle exec rake data:load_test[test@sdpv.local]'
           sh 'bundle exec rake es:test[test@sdpv.local]'
         }
-
-        stage('Get a ZAP Pod') {
-          agent { label 'owasp-zap-jenkins-slave' }
-      
-          steps {
-            script {
-              env.vocabsvc = sh returnStdout: true, script: 'echo -n "test-${BUILD_NUMBER}-${BRANCH_NAME}" | tr "_A-Z" "-a-z" | cut -c1-24 | sed -e "s/-$//"'
-              env.vocabhost = sh returnStdout: true, script: 'oc get service -l name=${vocabsvc} -o jsonpath="{.items[*].spec.clusterIP}"'
-              def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://${vocabhost}:8080'
-              publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
-              echo "Return value is: ${retVal}"
-            }
-          }
-        }
       }
-
       post {
-        always {
-          echo "Destroying test database..."
-          sh 'oc delete pods,dc,rc,services,secrets -l testdb=${svcname}'
-          echo "Destroying elasticsearch..."
-          sh 'oc delete pods,dc,rc,services,secrets -l name=${esname}'
-          echo "Archiving test artifacts..."
-          archiveArtifacts artifacts: '**/reports/coverage/*, **/reports/mini_test/*',
-            fingerprint: true
-        }
-
         success {
           updateSlack('#00FF00', 'Finished tests')
         }
@@ -119,6 +94,33 @@ pipeline {
         failure {
           updateSlack('#FF0000', 'Failed tests')
         }
+      }
+    }
+    
+    stage('Get a ZAP Pod') {
+      agent { label 'owasp-zap-jenkins-slave' }
+      
+      steps {
+        script {
+          env.vocabsvc = sh returnStdout: true, script: 'echo -n "test-${BUILD_NUMBER}-${BRANCH_NAME}" | tr "_A-Z" "-a-z" | cut -c1-24 | sed -e "s/-$//"'
+          env.vocabhost = sh returnStdout: true, script: 'oc get service -l name=${vocabsvc} -o jsonpath="{.items[*].spec.clusterIP}"'
+          def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://${vocabhost}:8080'
+          publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
+          echo "Return value is: ${retVal}"
+        }
+      }
+    }
+
+    stage('Clean up') {
+      agent { label 'vocab-ruby' }
+      steps {
+        echo "Destroying test database..."
+        sh 'oc delete pods,dc,rc,services,secrets -l testdb=${svcname}'
+        echo "Destroying elasticsearch..."
+        sh 'oc delete pods,dc,rc,services,secrets -l name=${esname}'
+        echo "Archiving test artifacts..."
+        archiveArtifacts artifacts: '**/reports/coverage/*, **/reports/mini_test/*',
+          fingerprint: true
       }
     }
 
