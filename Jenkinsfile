@@ -8,7 +8,7 @@ pipeline {
 
   stages {
     stage('Get a ZAP Pod') {
-      agent { label 'owasp-zap-openshift' }
+      agent { label 'owasp-zap-jenkins-slave' }
       
       steps {
         script {
