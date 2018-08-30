@@ -99,12 +99,12 @@ pipeline {
         script {
           env.vocabsvc = sh returnStdout: true, script: 'echo -n "test-${BUILD_NUMBER}-${BRANCH_NAME}" | tr "_A-Z" "-a-z" | cut -c1-24 | sed -e "s/-$//"'
           env.vocabhost = sh returnStdout: true, script: 'oc get service -l name=${vocabsvc} -o jsonpath="{.items[*].spec.clusterIP}"'
-          echo "vocabsvc: ${vocabsvc}"
-          echo "vocabhost: ${vocabhost}"
           def retVal = sh returnStatus: true, script: '/zap/zap-baseline.py -r baseline.html -t http://${vocabhost}:8080'
           publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: '/zap/wrk', reportFiles: 'baseline.html', reportName: 'ZAP Baseline Scan', reportTitles: 'ZAP Baseline Scan'])
-          echo "Return value is: ${retVal}"
         }
+        echo "vocabsvc: ${vocabsvc}"
+        echo "vocabhost: ${vocabhost}"
+        echo "Return value is: ${retVal}"
       }
     }
 
